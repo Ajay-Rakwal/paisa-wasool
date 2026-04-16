@@ -22,7 +22,7 @@ const Transactions = () => {
 
   const fetchExpenses = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/expenses', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/expenses', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) setExpenses(await res.json());
@@ -34,7 +34,7 @@ const Transactions = () => {
     if (isDemo) return;
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/expenses', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/expenses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ amount, description, type, date })
@@ -52,7 +52,7 @@ const Transactions = () => {
     if (isDemo) return;
     if (!window.confirm("Are you sure you want to delete this record?")) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/expenses/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/expenses/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -75,7 +75,7 @@ const Transactions = () => {
     e.preventDefault();
     if (isDemo) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/expenses/${editingTransaction}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/expenses/${editingTransaction}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(editForm)

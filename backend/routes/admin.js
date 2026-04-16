@@ -4,7 +4,7 @@ const auth = require('../middleware/auth');
 const adminAuth = require('../middleware/adminAuth');
 const { User, Expense, Feedback } = require('../models');
 
-const ML_SERVER_URL = 'http://localhost:5001';
+const ML_SERVER_URL = process.env.ML_SERVER_URL || 'http://localhost:5001';
 
 // --- STATS & CORRECTIONS ---
 

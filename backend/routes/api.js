@@ -4,7 +4,7 @@ const { Expense, Budget, User } = require('../models');
 const auth = require('../middleware/auth');
 const Groq = require('groq-sdk');
 
-const ML_SERVER_URL = 'http://localhost:5001';
+const ML_SERVER_URL = process.env.ML_SERVER_URL || 'http://localhost:5001';
 
 // Keyword-based fallback if ML server is unavailable
 const KEYWORD_MAP = {

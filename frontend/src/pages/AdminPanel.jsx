@@ -24,7 +24,7 @@ const AdminPanel = () => {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/admin/stats', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/stats', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) setStats(await res.json());
@@ -33,7 +33,7 @@ const AdminPanel = () => {
 
   const fetchCorrections = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/admin/corrections', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/corrections', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) setCorrections(await res.json());
@@ -42,7 +42,7 @@ const AdminPanel = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/admin/users', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/users', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) setUsers(await res.json());
@@ -51,7 +51,7 @@ const AdminPanel = () => {
 
   const fetchFeedbacks = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/feedback/all', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/feedback/all', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) setFeedbacks(await res.json());
@@ -62,7 +62,7 @@ const AdminPanel = () => {
     setRetraining(true);
     setRetrainResult(null);
     try {
-      const res = await fetch('http://localhost:5000/api/admin/retrain', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/retrain', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ const AdminPanel = () => {
     if (!replyText.trim()) return;
     setReplyLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/feedback/${feedbackId}/reply`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/feedback/${feedbackId}/reply`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ const AdminPanel = () => {
 
   const markResolved = async (feedbackId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/feedback/${feedbackId}/status`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/feedback/${feedbackId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

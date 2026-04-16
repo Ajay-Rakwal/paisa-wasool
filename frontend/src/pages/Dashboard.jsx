@@ -27,7 +27,7 @@ const Dashboard = () => {
   // Fetch aggregation of expenses
   const fetchSummary = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/expenses/summary', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/expenses/summary', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) setSummary(await res.json());
@@ -37,7 +37,7 @@ const Dashboard = () => {
   // Fetch budget limit
   const fetchBudget = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/budget', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/budget', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) setBudget(await res.json());
@@ -47,7 +47,7 @@ const Dashboard = () => {
   // Fetch ML habit insights
   const fetchInsights = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/expenses/insights', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/expenses/insights', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {

@@ -47,7 +47,7 @@ const HelpFeedback = () => {
 
   const fetchFeedbacks = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/feedback', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/feedback', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -73,7 +73,7 @@ const HelpFeedback = () => {
 
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/feedback', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/feedback', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -111,7 +111,7 @@ const HelpFeedback = () => {
     if (!replyText.trim() || !activeThread) return;
     setReplyLoading(true);
     try {
-        const res = await fetch(`http://localhost:5000/api/feedback/${activeThread._id}/reply`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/feedback/${activeThread._id}/reply`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -139,7 +139,7 @@ const HelpFeedback = () => {
 
   const handleResolve = async (threadId) => {
     try {
-        const res = await fetch(`http://localhost:5000/api/feedback/${threadId}/status`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/feedback/${threadId}/status`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -159,7 +159,7 @@ const HelpFeedback = () => {
   const handleDeleteThread = async (threadId) => {
     if (!window.confirm("Delete this discussion? This cannot be undone.")) return;
     try {
-        const res = await fetch(`http://localhost:5000/api/feedback/${threadId}`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/feedback/${threadId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
