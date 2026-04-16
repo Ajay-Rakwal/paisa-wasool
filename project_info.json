@@ -1,0 +1,98 @@
+{
+  "project_name": "PAISA WA$OOL",
+  "tagline": "AI-Powered Expense Management & Financial Intelligence",
+  "description": "A comprehensive full-stack web application designed to help users track their finances with the power of Artificial Intelligence. It offers real-time expense monitoring, automated categorization, and personalized financial advice to help users achieve their savings goals.",
+  "tech_stack": {
+    "frontend": {
+      "framework": "React (Vite)",
+      "styling": "Vanilla CSS (Premium Dark Mode Aesthetic)",
+      "icons": "Lucide React",
+      "visualization": "Recharts"
+    },
+    "backend": {
+      "runtime": "Node.js",
+      "framework": "Express.js",
+      "database": "MongoDB (Mongoose ODM)",
+      "authentication": "JWT (JSON Web Tokens)",
+      "security": "Bcrypt.js (Password Hashing)"
+    },
+    "ai_ml": {
+      "large_language_model": "Groq Cloud (LLama-3.1-8b-instant)",
+      "categorization_engine": "Python-based ML (Linear Regression & Z-Score)",
+      "integration": "Groq SDK & custom analytical logic"
+    }
+  },
+  "functional_features": [
+    {
+      "feature": "User Authentication System",
+      "description": "Secure account creation and login using hashed passwords and token-based sessions (JWT).",
+      "details": "Protects user data and ensures private access to personal financial records."
+    },
+    {
+      "feature": "Expense & Income Tracking",
+      "description": "Detailed CRUD operations for managing all financial transactions.",
+      "details": "Supports categorization (Food, Shopping, Salary, etc.) and automatic date stamping."
+    },
+    {
+      "feature": "AI Financial Advisor",
+      "description": "An embedded AI chatbot that understands the user's spending context.",
+      "details": "Uses current balance, budget limits, and category breakdowns to provide actionable savings advice via Groq SDK."
+    },
+    {
+      "feature": "Smart categorization (ML)",
+      "description": "Automatic prediction of transaction categories based on natural language descriptions.",
+      "details": "Integration with a Python ML script to categorize descriptions like 'Bought Pizza' into 'Food' automatically."
+    },
+    {
+      "feature": "Interactive Dashboard",
+      "description": "A high-level overview of financial health using visual charts.",
+      "details": "Displays balance, total income vs. expense bars, and category distribution pie charts using Recharts."
+    },
+    {
+      "feature": "Budget Management",
+      "description": "Set and monitor monthly spending limits.",
+      "details": "System tracks 'Budget vs. Actual' to alert users when they are nearing their financial limits."
+    },
+    {
+      "feature": "Advanced Spending Insights",
+      "description": "Analytical logic that identifies spending patterns and behaviors.",
+      "details": "Calculates weekend vs. weekday spending ratios and identifies dominant spending categories."
+    },
+    {
+      "feature": "Machine Learning Projections",
+      "description": "Predictive modeling for future financial planning.",
+      "details": "Uses Linear Regression to project the next month's total expenses and Z-Score for anomaly detection."
+    }
+  ],
+  "non_functional_features": [
+    {
+      "feature": "Premium Aesthetic & UX",
+      "description": "A sleek, dark-mode user interface designed for a high-end feel.",
+      "details": "Glassmorphism effects, smooth transitions, and a 'PAISA WA$OOL' branding theme."
+    },
+    {
+      "feature": "Localization",
+      "description": "Native support for Indian currency and regional financial context.",
+      "details": "Uses Indian Rupee (₹) symbols and localized formatting throughout the UI."
+    },
+    {
+      "feature": "Security & Privacy",
+      "description": "Robust protection of sensitive financial data.",
+      "details": "Middleware-based route protection, environment variable isolation for API keys, and secure password hashing."
+    },
+    {
+      "feature": "Performance & Scalability",
+      "description": "Fast load times and responsive interactions.",
+      "details": "Leverages Vite's HMR for frontend and Express's event-driven architecture for the backend."
+    },
+    {
+      "feature": "System Modularity",
+      "description": "Clean separation of concerns within the codebase.",
+      "details": "Distinct directories for routes, models, middleware, and ML components to facilitate easy maintenance."
+    }
+  ],
+  "developer_info": {
+    "project_phase": "Development / Semester 2 Project",
+    "course": "MCA"
+  }
+}
