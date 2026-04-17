@@ -47,7 +47,7 @@ const HelpFeedback = () => {
 
   const fetchFeedbacks = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/feedback', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/feedback`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -73,7 +73,7 @@ const HelpFeedback = () => {
 
     setLoading(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/feedback', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/feedback`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

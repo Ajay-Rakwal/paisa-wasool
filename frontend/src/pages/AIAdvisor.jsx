@@ -20,7 +20,7 @@ const AIAdvisor = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/me', {
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.ok) {
@@ -57,7 +57,7 @@ const AIAdvisor = () => {
         setAdvice('');
         setLimitError('');
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ai/advisor', {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ai/advisor`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',

@@ -16,7 +16,7 @@ const Budget = () => {
 
   const fetchBudget = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/budget', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/budget`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -32,7 +32,7 @@ const Budget = () => {
     setLoading(true);
     setMessage('');
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/budget', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/budget`, {
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json',
