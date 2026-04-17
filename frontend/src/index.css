@@ -908,10 +908,79 @@ button {
 /* ═══════════════════════════════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════════════════════════════ */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 50;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.open {
+  display: block;
+  opacity: 1;
+}
+
+.mobile-header {
+  display: none;
+}
+
 @media (max-width: 768px) {
+  .app-container { flex-direction: column; }
+  
+  .mobile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-light);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+  
+  .mobile-logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-main);
+  }
+  
+  .mobile-logo span {
+    background: var(--brand-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .hamburger-btn {
+    background: transparent;
+    color: var(--text-main);
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sidebar { 
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    z-index: 100;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
   .landing-hero-title { font-size: 3rem; }
   .landing-features-grid { grid-template-columns: 1fr 1fr; }
   .steps-grid { grid-template-columns: 1fr; gap: 24px; }
   .admin-stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .main-content { padding: 24px; }
+  .main-content { padding: 24px; overflow-y: visible; }
 }

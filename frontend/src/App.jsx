@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { AuthProvider, AuthContext } from './context/AuthContext';
 import Sidebar from './components/Sidebar';
+import MobileHeader from './components/MobileHeader';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Transactions from './pages/Transactions';
@@ -14,12 +15,16 @@ import HelpFeedback from './pages/HelpFeedback';
 /** Route wrapper for regular users (not admin) */
 const UserRoute = ({ children }) => {
   const { token, user } = useContext(AuthContext);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
   if (!token) return <Navigate to="/welcome" />;
   // Admin should not access user pages
   if (user?.role === 'admin') return <Navigate to="/admin" />;
   return (
     <div className="app-container">
-      <Sidebar />
+      <MobileHeader onMenuClick={() => setIsSidebarOpen(true)} />
+      <Sidebar isOpen={isSidebarOpen} closeSidebar={() => setIsSidebarOpen(false)} />
+      <div className={`sidebar-overlay ${isSidebarOpen ? 'open' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
       <div className="main-content">
         {children}
       </div>
@@ -30,11 +35,15 @@ const UserRoute = ({ children }) => {
 /** Route wrapper for admin only */
 const AdminRoute = ({ children }) => {
   const { token, user } = useContext(AuthContext);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   if (!token) return <Navigate to="/welcome" />;
   if (user?.role !== 'admin') return <Navigate to="/" />;
   return (
     <div className="app-container">
-      <Sidebar />
+      <MobileHeader onMenuClick={() => setIsSidebarOpen(true)} />
+      <Sidebar isOpen={isSidebarOpen} closeSidebar={() => setIsSidebarOpen(false)} />
+      <div className={`sidebar-overlay ${isSidebarOpen ? 'open' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
       <div className="main-content">
         {children}
       </div>

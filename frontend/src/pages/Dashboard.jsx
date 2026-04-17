@@ -111,11 +111,11 @@ const Dashboard = () => {
         {/* Left Column: Charts */}
         <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
           <h3 style={{ marginTop: 0, marginBottom: '24px' }}>Category Breakdown</h3>
-          <div style={{ height: '350px', flex: 1 }}>
+          <div style={{ minHeight: '300px', height: '100%', flex: 1 }}>
             {pieData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
-                  <Pie data={pieData} innerRadius={90} outerRadius={125} paddingAngle={8} dataKey="value" label={entry => entry.name}>
+                  <Pie data={pieData} innerRadius="55%" outerRadius="80%" paddingAngle={8} dataKey="value" labelLine={false} label={entry => entry.name}>
                     {pieData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
