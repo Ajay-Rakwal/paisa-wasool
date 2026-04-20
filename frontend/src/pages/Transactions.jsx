@@ -1,10 +1,10 @@
 import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { Edit2, Trash2, Tag, Box } from 'lucide-react';
+import { Edit2, Trash2 } from 'lucide-react';
+import { apiFetch } from '../utils/api';
 
 const Transactions = () => {
-  const { token, user } = useContext(AuthContext);
-  const isDemo = user?.email === 'demo@paisawasool.com';
+  const auth = useContext(AuthContext);
   const [expenses, setExpenses] = useState([]);
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
@@ -18,46 +18,37 @@ const Transactions = () => {
 
   useEffect(() => {
     fetchExpenses();
-  }, [token]);
+  }, [auth.token, auth.isDemo]);
 
   const fetchExpenses = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/expenses`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (res.ok) setExpenses(await res.json());
-    } catch(err) { console.error(err); }
+      const data = await apiFetch('/api/expenses', {}, auth);
+      setExpenses(data);
+    } catch(err) { console.error('Fetch error:', err); }
   };
 
   const handleManualAdd = async (e) => {
     e.preventDefault();
-    if (isDemo) return;
     setLoading(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/expenses`, {
+      await apiFetch('/api/expenses', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ amount, description, type, date })
-      });
-      if(res.ok) {
-        setAmount(''); setDescription('');
-        setDate(new Date().toISOString().split('T')[0]);
-        fetchExpenses();
-      }
-    } catch(err) { console.error(err); }
+      }, auth);
+      setAmount(''); 
+      setDescription('');
+      setDate(new Date().toISOString().split('T')[0]);
+      fetchExpenses();
+    } catch(err) { console.error('Add error:', err); }
     setLoading(false);
   };
 
   const handleDelete = async (id) => {
-    if (isDemo) return;
     if (!window.confirm("Are you sure you want to delete this record?")) return;
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/expenses/${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if(res.ok) fetchExpenses();
-    } catch(err) { console.error(err); }
+      await apiFetch(`/api/expenses/${id}`, { method: 'DELETE' }, auth);
+      fetchExpenses();
+    } catch(err) { console.error('Delete error:', err); }
   };
 
   const openEditModal = (ex) => {
@@ -73,37 +64,31 @@ const Transactions = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    if (isDemo) return;
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/expenses/${editingTransaction}`, {
+      await apiFetch(`/api/expenses/${editingTransaction}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(editForm)
-      });
-      if (res.ok) {
-        setEditingTransaction(null);
-        fetchExpenses();
-      }
-    } catch (err) { console.error(err); }
+      }, auth);
+      setEditingTransaction(null);
+      fetchExpenses();
+    } catch (err) { console.error('Update error:', err); }
   };
 
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
         <h1 className="page-title" style={{ margin: 0 }}>Transactions</h1>
-        {isDemo && (
+        {auth.isDemo && (
           <div style={{ 
-            background: 'var(--brand-accent)', 
-            color: 'black', 
+            background: 'rgba(16, 185, 129, 0.1)', 
+            color: 'var(--brand-primary)', 
             padding: '4px 12px', 
             borderRadius: '20px', 
             fontSize: '0.85rem', 
             fontWeight: 'bold',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px'
+            border: '1px solid var(--brand-primary)'
           }}>
-            <Box size={14} /> Demo Mode (Read-Only)
+             Local Demo Instance
           </div>
         )}
       </div>
@@ -149,9 +134,9 @@ const Transactions = () => {
                 type="submit" 
                 className="btn-primary" 
                 style={{ width: '100%' }}
-                disabled={isDemo || loading}
+                disabled={loading}
               >
-                {isDemo ? 'Add Record (Disabled in Demo)' : 'Add Record'}
+                {loading ? 'Adding...' : 'Add Record'}
               </button>
             </form>
           </div>
@@ -194,7 +179,7 @@ const Transactions = () => {
                     <div style={{ display: 'flex', gap: '8px' }}>
                       <button 
                           className="hover-action"
-                          onClick={() => !isDemo && openEditModal(ex)}
+                          onClick={() => openEditModal(ex)}
                           style={{ 
                               background: 'rgba(255,255,255,0.05)', 
                               border: 'none', 
@@ -203,15 +188,14 @@ const Transactions = () => {
                               borderRadius: '6px',
                               display: 'flex',
                               alignItems: 'center',
-                              cursor: isDemo ? 'not-allowed' : 'pointer',
-                              opacity: isDemo ? 0.5 : 1
+                              cursor: 'pointer'
                           }}
-                          title={isDemo ? "Disabled in Demo" : "Edit Transaction"}
+                          title="Edit Transaction"
                       >
                           <Edit2 size={16} />
                       </button>
                       <button 
-                          onClick={() => !isDemo && handleDelete(ex._id)} 
+                          onClick={() => handleDelete(ex._id)} 
                           className="delete-btn"
                           style={{ 
                               background: 'transparent', 
@@ -220,10 +204,9 @@ const Transactions = () => {
                               display: 'flex',
                               alignItems: 'center',
                               padding: '8px',
-                              cursor: isDemo ? 'not-allowed' : 'pointer',
-                              opacity: isDemo ? 0.5 : 1
+                              cursor: 'pointer'
                           }}
-                          title={isDemo ? "Disabled in Demo" : "Delete"}
+                          title="Delete"
                       >
                           <Trash2 size={18} />
                       </button>

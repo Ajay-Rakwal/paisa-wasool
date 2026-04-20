@@ -1,37 +1,36 @@
 import { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Sparkles, Send } from 'lucide-react';
+import { apiFetch } from '../utils/api';
+import { demoService } from '../utils/demoService';
 
 const MAX_WORDS = 2000;
 
 const countWords = (text) => text.trim() ? text.trim().split(/\s+/).length : 0;
 
 const AIAdvisor = () => {
-    const { token, user, setUser } = useContext(AuthContext);
+    const auth = useContext(AuthContext);
     const [prompt, setPrompt] = useState('');
     const [advice, setAdvice] = useState('');
     const [loading, setLoading] = useState(false);
     const [limitError, setLimitError] = useState('');
-    const [queryCount, setQueryCount] = useState(user?.aiQueryCount || 0);
-
-    const isDemo = user?.email === 'demo@paisawasool.com';
+    const [queryCount, setQueryCount] = useState(0);
 
     // Refresh query count on load
     useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (res.ok) {
-                    const data = await res.json();
+        if (auth.isDemo) {
+            setQueryCount(demoService.getAiCount());
+        } else {
+            const fetchUser = async () => {
+                try {
+                    const data = await apiFetch('/api/auth/me', {}, auth);
                     setQueryCount(data.aiQueryCount || 0);
-                    setUser(data);
-                }
-            } catch (err) { console.error(err); }
-        };
-        fetchUser();
-    }, [token]);
+                    auth.setUser(data);
+                } catch (err) { console.error(err); }
+            };
+            fetchUser();
+        }
+    }, [auth.token, auth.isDemo]);
 
     const wordCount = countWords(prompt);
 
@@ -48,20 +47,22 @@ const AIAdvisor = () => {
     const handleAskAdvice = async (e) => {
         e.preventDefault();
         if (!prompt) return;
-        if (wordCount > MAX_WORDS) {
-            setLimitError(`Word limit reached! Maximum ${MAX_WORDS} words allowed.`);
+        
+        if (auth.isDemo && queryCount >= 5) {
+            setLimitError("Demo limit reached! You have used your 5 free AI queries for this instance.");
             return;
         }
-        
+
         setLoading(true);
         setAdvice('');
         setLimitError('');
         try {
+            // We still hit the real AI endpoint even in demo mode (token handled by apiFetch utility)
             const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ai/advisor`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` 
+                    'Authorization': `Bearer ${auth.token}` 
                 },
                 body: JSON.stringify({ prompt })
             });
@@ -73,7 +74,6 @@ const AIAdvisor = () => {
                 return;
             }
 
-            // Handle streaming response
             const reader = res.body.getReader();
             const decoder = new TextDecoder();
             let accumulatedAdvice = '';
@@ -81,19 +81,23 @@ const AIAdvisor = () => {
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) break;
-                
                 const chunk = decoder.decode(value, { stream: true });
                 accumulatedAdvice += chunk;
                 setAdvice(accumulatedAdvice);
-                setLoading(false);
             }
-            // Update local count
-            if (isDemo) setQueryCount(prev => prev + 1);
+            
+            // Success! Increment count
+            if (auth.isDemo) {
+                const newCount = demoService.incrementAiCount();
+                setQueryCount(newCount);
+            } else {
+                setQueryCount(prev => prev + 1);
+            }
         } catch (err) {
             console.error('Fetch error:', err);
             setAdvice("Server error while contacting AI.");
-            setLoading(false);
         }
+        setLoading(false);
     };
 
     return (
@@ -121,7 +125,7 @@ const AIAdvisor = () => {
                         <button 
                             type="submit" 
                             className="btn-primary" 
-                            disabled={loading || wordCount > MAX_WORDS || (isDemo && queryCount >= 5)} 
+                            disabled={loading || wordCount > MAX_WORDS || (auth.isDemo && queryCount >= 5)} 
                             style={{ 
                                 display: 'flex', 
                                 alignItems: 'center', 
@@ -131,7 +135,7 @@ const AIAdvisor = () => {
                                 borderRadius: 'var(--radius-sm)'
                             }}
                         >
-                            <Send size={18} /> {isDemo && queryCount >= 5 ? 'Limit Reached' : 'Ask'}
+                            <Send size={18} /> {auth.isDemo && queryCount >= 5 ? 'Limit Reached' : 'Ask'}
                         </button>
                     </div>
                     {/* Word count — always visible */}
@@ -148,15 +152,15 @@ const AIAdvisor = () => {
                             }}>
                                 {wordCount} / {MAX_WORDS} words
                             </span>
-                            {isDemo && (
-                                <span style={{ 
-                                    fontSize: '0.8rem', 
-                                    fontWeight: '600',
-                                    color: queryCount >= 5 ? 'var(--danger)' : 'var(--brand-primary)' 
-                                }}>
-                                    Queries remaining: {Math.max(0, 5 - queryCount)}/5
-                                </span>
-                            )}
+                            <span style={{ 
+                                fontSize: '0.8rem', 
+                                fontWeight: '600',
+                                color: queryCount >= 5 ? 'var(--danger)' : 'var(--brand-primary)' 
+                            }}>
+                                {auth.isDemo ? 'Demo queries remaining: ' : 'Total AI queries: '}
+                                {auth.isDemo ? Math.max(0, 5 - queryCount) : queryCount}
+                                {auth.isDemo && '/5'}
+                            </span>
                         </div>
                         {limitError && (
                             <span style={{ fontSize: '0.85rem', color: 'var(--danger)', fontWeight: '600' }}>

@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { Target, AlertCircle, Save, Box } from 'lucide-react';
+import { Target, AlertCircle, Save } from 'lucide-react';
+import { apiFetch } from '../utils/api';
 
 const Budget = () => {
-  const { token, user } = useContext(AuthContext);
-  const isDemo = user?.email === 'demo@paisawasool.com';
+  const auth = useContext(AuthContext);
   const [budget, setBudget] = useState(null);
   const [monthlyLimit, setMonthlyLimit] = useState('');
   const [loading, setLoading] = useState(false);
@@ -12,18 +12,13 @@ const Budget = () => {
 
   useEffect(() => {
     fetchBudget();
-  }, [token]);
+  }, [auth.token, auth.isDemo]);
 
   const fetchBudget = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/budget`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setBudget(data);
-        setMonthlyLimit(data.monthlyLimit || '');
-      }
+      const data = await apiFetch('/api/budget', {}, auth);
+      setBudget(data);
+      setMonthlyLimit(data.monthlyLimit || '');
     } catch(err) { console.error("Error fetching budget:", err); }
   };
 
@@ -32,23 +27,15 @@ const Budget = () => {
     setLoading(true);
     setMessage('');
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/budget`, {
+      await apiFetch('/api/budget', {
         method: 'POST',
-        headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}` 
-        },
         body: JSON.stringify({ monthlyLimit: Number(monthlyLimit) }),
-      });
-      if (res.ok) {
-        setMessage('Budget updated successfully!');
-        fetchBudget();
-      } else {
-        setMessage('Failed to update budget.');
-      }
+      }, auth);
+      setMessage('Budget updated successfully!');
+      fetchBudget();
     } catch(err) {
       console.error(err);
-      setMessage('Network error.');
+      setMessage('Failed to update budget.');
     }
     setLoading(false);
   };
@@ -57,19 +44,17 @@ const Budget = () => {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
         <h1 className="page-title" style={{ margin: 0 }}>Budget Management</h1>
-        {isDemo && (
+        {auth.isDemo && (
           <div style={{ 
-            background: 'var(--brand-accent)', 
-            color: 'black', 
+            background: 'rgba(16, 185, 129, 0.1)', 
+            color: 'var(--brand-primary)', 
             padding: '4px 12px', 
             borderRadius: '20px', 
             fontSize: '0.85rem', 
             fontWeight: 'bold',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px'
+            border: '1px solid var(--brand-primary)'
           }}>
-            <Box size={14} /> Demo Mode (Read-Only)
+            Local Demo Instance
           </div>
         )}
       </div>

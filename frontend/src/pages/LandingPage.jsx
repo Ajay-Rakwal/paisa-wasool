@@ -37,24 +37,12 @@ const LandingPage = () => {
       return;
     }
     setDemoLoading(true);
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: 'demo@paisawasool.com', password: 'Demo@123' })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        login(data.token, data.user);
-        navigate('/');
-      } else {
-        alert('Demo mode is currently unavailable. Please try again later.');
-      }
-    } catch (err) {
-      console.error('Demo login failed:', err);
-      alert('Network error while launching demo.');
-    }
-    setDemoLoading(false);
+    // Simulate a brief loading transition for premium feel
+    setTimeout(() => {
+      enterDemoMode();
+      navigate('/');
+      setDemoLoading(false);
+    }, 800);
   };
 
   const handleLoginSuccess = () => {

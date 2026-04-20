@@ -2,64 +2,38 @@ import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Link } from 'react-router-dom';
-import { Wallet, Brain, Box } from 'lucide-react';
+import { Wallet, Brain } from 'lucide-react';
+import { apiFetch } from '../utils/api';
 
 const COLORS = ['#10B981', '#F59E0B', '#F43F5E', '#0D9488', '#3b82f6', '#ec4899', '#8b5cf6', '#2dd4bf'];
 
-/**
- * Dashboard Component
- * Displays a high-level overview of the user's financial status,
- * including a categorization pie chart and budget tracking progress.
- */
 const Dashboard = () => {
-  const { token, user } = useContext(AuthContext);
-  const isDemo = user?.email === 'demo@paisawasool.com';
+  const auth = useContext(AuthContext);
   const [summary, setSummary] = useState(null);
   const [budget, setBudget] = useState(null);
   const [insights, setInsights] = useState([]);
 
   useEffect(() => {
-    fetchSummary();
-    fetchBudget();
-    fetchInsights();
-  }, [token]);
+    fetchData();
+  }, [auth.token, auth.isDemo]);
 
-  // Fetch aggregation of expenses
-  const fetchSummary = async () => {
+  const fetchData = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/expenses/summary`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (res.ok) setSummary(await res.json());
-    } catch(err) { console.error(err); }
-  };
-
-  // Fetch budget limit
-  const fetchBudget = async () => {
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/budget`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (res.ok) setBudget(await res.json());
-    } catch(err) { console.error(err); }
-  };
-
-  // Fetch ML habit insights
-  const fetchInsights = async () => {
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/expenses/insights`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (res.ok) {
-          const data = await res.json();
-          setInsights(data.insights || []);
-      }
-    } catch(err) { console.error(err); }
+      const [summaryData, budgetData, insightsData] = await Promise.all([
+        apiFetch('/api/expenses/summary', {}, auth),
+        apiFetch('/api/budget', {}, auth),
+        apiFetch('/api/expenses/insights', {}, auth)
+      ]);
+      setSummary(summaryData);
+      setBudget(budgetData);
+      setInsights(insightsData.insights || []);
+    } catch (err) {
+      console.error('Error fetching dashboard data:', err);
+    }
   };
 
   if (!summary) return <div className="page-title">Loading Dashboard...</div>;
 
-  // Prepare data for the Recharts Pie Chart
   const pieData = Object.keys(summary.categoryTotals || {}).map(key => ({
     name: key,
     value: summary.categoryTotals[key]
@@ -67,26 +41,23 @@ const Dashboard = () => {
 
   const totalExpense = summary.totalExpense || 0;
   const budgetLimit = budget?.monthlyLimit || 0;
-  // Calculate percentage for progress bar, capping it at 100%
   const budgetPercent = budgetLimit > 0 ? Math.min((totalExpense / budgetLimit) * 100, 100) : 0;
 
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
         <h1 className="page-title" style={{ margin: 0 }}>Overview</h1>
-        {isDemo && (
+        {auth.isDemo && (
           <div style={{ 
-            background: 'var(--brand-accent)', 
-            color: 'black', 
+            background: 'rgba(16, 185, 129, 0.1)', 
+            color: 'var(--brand-primary)', 
             padding: '4px 12px', 
             borderRadius: '20px', 
             fontSize: '0.85rem', 
             fontWeight: 'bold',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px'
+            border: '1px solid var(--brand-primary)'
           }}>
-            <Box size={14} /> Demo Mode
+            Local Demo Instance
           </div>
         )}
       </div>
