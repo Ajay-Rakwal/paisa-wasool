@@ -57,6 +57,11 @@ const AIAdvisor = () => {
         setAdvice('');
         setLimitError('');
         try {
+            let body = { prompt };
+            if (auth.isDemo) {
+                body.context = demoService.getSummary();
+            }
+
             // We still hit the real AI endpoint even in demo mode (token handled by apiFetch utility)
             const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ai/advisor`, {
                 method: 'POST',
@@ -64,7 +69,7 @@ const AIAdvisor = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${auth.token}` 
                 },
-                body: JSON.stringify({ prompt })
+                body: JSON.stringify(body)
             });
 
             if (!res.ok) {

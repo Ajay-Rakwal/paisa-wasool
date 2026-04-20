@@ -107,16 +107,32 @@ const Transactions = () => {
                     <option value="income">Income</option>
                   </select>
                 </div>
-                <div style={{flex:1}}>
-                  <label className="label">Amount</label>
-                  <input type="number" className="input-field" value={amount} onChange={e => setAmount(e.target.value)} required />
-                </div>
-              </div>
-              
-              <div style={{ marginBottom: '12px' }}>
-                <label className="label">Date</label>
-                <input type="date" className="input-field" value={date} onChange={e => setDate(e.target.value)} required />
-              </div>
+                 <div style={{flex:1}}>
+                   <label className="label">Amount</label>
+                   <input 
+                    type="number" 
+                    className="input-field" 
+                    value={amount} 
+                    onChange={e => setAmount(e.target.value)} 
+                    min="0.01" 
+                    step="0.01"
+                    required 
+                   />
+                 </div>
+               </div>
+               
+               <div style={{ marginBottom: '12px' }}>
+                 <label className="label">Date</label>
+                 <input 
+                    type="date" 
+                    className="input-field" 
+                    value={date} 
+                    onChange={e => setDate(e.target.value)} 
+                    max={new Date().toISOString().split('T')[0]}
+                    required 
+                    style={{ colorScheme: 'dark' }} // Ensures native picker icon is white in dark mode
+                 />
+               </div>
 
               <label className="label">
                   {type === 'income' ? 'Description (Where did this come from?)' : 'Description (What did you spend on?)'}
@@ -248,7 +264,15 @@ const Transactions = () => {
                 </div>
                 <div style={{flex:1}}>
                   <label className="label">Amount</label>
-                  <input type="number" className="input-field" value={editForm.amount} onChange={e => setEditForm({...editForm, amount: e.target.value})} required />
+                  <input 
+                    type="number" 
+                    className="input-field" 
+                    value={editForm.amount} 
+                    onChange={e => setEditForm({...editForm, amount: e.target.value})} 
+                    min="0.01"
+                    step="0.01"
+                    required 
+                  />
                 </div>
               </div>
 
@@ -259,7 +283,15 @@ const Transactions = () => {
 
               <div style={{ marginBottom: '16px' }}>
                 <label className="label">Date</label>
-                <input type="date" className="input-field" value={editForm.date} onChange={e => setEditForm({...editForm, date: e.target.value})} required />
+                <input 
+                    type="date" 
+                    className="input-field" 
+                    value={editForm.date} 
+                    onChange={e => setEditForm({...editForm, date: e.target.value})} 
+                    max={new Date().toISOString().split('T')[0]}
+                    required 
+                    style={{ colorScheme: 'dark' }}
+                />
               </div>
 
               <div style={{ marginBottom: '24px' }}>

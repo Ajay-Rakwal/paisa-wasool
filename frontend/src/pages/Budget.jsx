@@ -80,14 +80,14 @@ const Budget = () => {
                 min="0"
                 required
             />
-            <button 
-                type="submit" 
-                className="btn-primary" 
-                style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }} 
-                disabled={loading || isDemo}
-            >
-              <Save size={18} /> {isDemo ? 'Save Limit (Disabled in Demo)' : (loading ? 'Saving...' : 'Save Limit')}
-            </button>
+             <button 
+                 type="submit" 
+                 className="btn-primary" 
+                 style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }} 
+                 disabled={loading || auth.isDemo}
+             >
+               <Save size={18} /> {auth.isDemo ? 'Save Limit (Disabled in Demo)' : (loading ? 'Saving...' : 'Save Limit')}
+             </button>
             {message && <div style={{ marginTop: '12px', color: message.includes('success') ? 'var(--success)' : 'var(--danger)', fontSize: '0.9rem' }}>{message}</div>}
           </form>
         </div>

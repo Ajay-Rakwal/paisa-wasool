@@ -48,7 +48,7 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
           </>
         )}
       </div>
-      <div style={{ padding: '0 12px' }}>
+      <div style={{ padding: '12px', borderTop: '1px solid var(--border-light)', background: 'var(--bg-glass)', position: 'sticky', bottom: 0 }}>
         <button onClick={toggleTheme} className="theme-toggle">
           <span className="toggle-icon">{theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}</span>
           {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}

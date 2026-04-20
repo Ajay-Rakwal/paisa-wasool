@@ -23,6 +23,27 @@ const LoginModal = ({ onClose, onSuccess }) => {
       return;
     }
 
+    if (!isLogin) {
+      if (password.length < 6) {
+        setError('Password must be at least 6 characters long');
+        setLoading(false);
+        return;
+      }
+      
+      const weakPasswords = ['123456', '123456789', 'password', 'qwerty', 'abcdef'];
+      if (weakPasswords.includes(password.toLowerCase()) || /^(.)\1+$/.test(password)) {
+        setError('This password is too common or simple. Please use a stronger one.');
+        setLoading(false);
+        return;
+      }
+
+      if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
+        setError('Password must contain both letters and numbers.');
+        setLoading(false);
+        return;
+      }
+    }
+
     const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
     const body = isLogin ? { email, password } : { username, email, password };
     

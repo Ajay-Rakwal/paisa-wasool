@@ -103,6 +103,11 @@ router.post('/expenses', auth, async (req, res) => {
   if (req.user.email === 'demo@paisawasool.com') return res.status(403).json({ message: 'Disabled in Demo' });
   try {
     const { amount, description, type, date, category: manualCategory } = req.body;
+    
+    // Server-side validation
+    if (Number(amount) <= 0) return res.status(400).json({ message: 'Amount must be greater than 0' });
+    if (date && new Date(date) > new Date()) return res.status(400).json({ message: 'Future dates are not allowed' });
+
     let category = manualCategory || 'Other';
     if ((type === 'expense' || !type) && description && !manualCategory) {
       category = await predictCategory(description);
@@ -186,8 +191,9 @@ router.get('/expenses/insights', auth, async (req, res) => {
     const weeksElapsed = Math.max(1, Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24 * 7)));
     const insights = [];
     const foodStats = categoryStats['Food'] || categoryStats['food'];
-    if (foodStats && (foodStats.count / weeksElapsed) > 2) insights.push("You frequently spend on food.");
-    if (dayStats.weekend > dayStats.weekday) insights.push("Spending is higher on weekends.");
+    if (foodStats && (foodStats.count / weeksElapsed) > 2) insights.push("You're a frequent foodie! Consider a weekly meal prep budget.");
+    if (dayStats.weekend > dayStats.weekday) insights.push("Weekend spending spree detected. Try setting a 'Saturday Limit'.");
+    if (totalSpend / weeksElapsed > 10000) insights.push("High weekly burn rate. Check for recurring subscriptions you don't use.");
     
     let dominantCategory = null;
     let maxSpending = 0;
@@ -195,9 +201,10 @@ router.get('/expenses/insights', auth, async (req, res) => {
         if (stats.amount > maxSpending) { maxSpending = stats.amount; dominantCategory = cat; }
     }
     if (dominantCategory && (maxSpending / totalSpend) > 0.4) {
-        insights.push(`Concentrated spending on ${dominantCategory} (${((maxSpending/totalSpend)*100).toFixed(0)}%).`);
+        insights.push(`Your spending is heavily concentrated in ${dominantCategory} (${((maxSpending/totalSpend)*100).toFixed(0)}%). Consider diversifying your lifestyle expenses.`);
     }
-    if (!insights.length) insights.push("Spending is well balanced.");
+    if (insights.length < 2) insights.push("Financial habit: You maintain consistent spending patterns across categories.");
+    if (!insights.length) insights.push("Spending is well balanced across your typical categories.");
     res.json({ insights });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
@@ -264,29 +271,33 @@ async function createChatWithFallback(messages, options) {
 
 router.post('/ai/advisor', auth, async (req, res) => {
   try {
-    const { prompt } = req.body;
-    if (req.user.email === 'demo@paisawasool.com') {
-      const demoUser = await User.findById(req.user.id);
-      if (demoUser && demoUser.aiQueryCount >= 5) {
-        return res.status(403).json({ message: 'Demo limit reached! Create a free account for unlimited access.' });
-      }
+    const { prompt, context } = req.body;
+    let expenses = [];
+    let budget = null;
+    let totalExpense = 0;
+    let categoryTotals = {};
+    let budgetLimit = 'Not set';
+
+    if (req.user.id === 'demo-user-id' && context) {
+      // Use localized context from frontend
+      totalExpense = context.totalExpense;
+      categoryTotals = context.categoryTotals;
+      budgetLimit = context.budgetLimit;
+    } else {
+      [expenses, budget] = await Promise.all([
+        Expense.find({ userId: req.user.id, type: 'expense' }).sort({ date: -1 }).limit(20),
+        Budget.findOne({ userId: req.user.id })
+      ]);
+
+      expenses.forEach(ex => {
+        totalExpense += ex.amount;
+        categoryTotals[ex.category] = (categoryTotals[ex.category] || 0) + ex.amount;
+      });
+      if (budget) budgetLimit = `₹${budget.monthlyLimit}`;
     }
 
-    const [expenses, budget] = await Promise.all([
-      Expense.find({ userId: req.user.id, type: 'expense' }).sort({ date: -1 }).limit(20),
-      Budget.findOne({ userId: req.user.id })
-    ]);
-
-    let totalExpense = 0;
-    const categoryTotals = {};
-    expenses.forEach(ex => {
-      totalExpense += ex.amount;
-      categoryTotals[ex.category] = (categoryTotals[ex.category] || 0) + ex.amount;
-    });
-
-    const budgetLimit = budget ? budget.monthlyLimit : 'Not set';
     const systemPrompt = `You are an expert financial advisor. Keep responses short and practical. Use ₹ currency. 
-    Context: Budget: ₹${budgetLimit}, Spent Recently: ₹${totalExpense}, Categories: ${JSON.stringify(categoryTotals)}.`;
+    Context: Budget: ${budgetLimit}, Spent Recently: ₹${totalExpense}, Categories: ${JSON.stringify(categoryTotals)}.`;
 
     const stream = await createChatWithFallback(
       [{ role: 'system', content: systemPrompt }, { role: 'user', content: prompt || "Financial health check." }],
