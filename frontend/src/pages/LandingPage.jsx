@@ -10,7 +10,7 @@ const LandingPage = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [demoLoading, setDemoLoading] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { token, login } = useContext(AuthContext);
+  const { token, login, enterDemoMode } = useContext(AuthContext);
   const { theme, toggleTheme } = useContext(ThemeContext);
   const navigate = useNavigate();
 
@@ -31,18 +31,19 @@ const LandingPage = () => {
     }
   };
 
-  const handleDemo = async () => {
+  const handleDemo = () => {
     if (token) {
       navigate('/');
       return;
     }
     setDemoLoading(true);
-    // Simulate a brief loading transition for premium feel
-    setTimeout(() => {
+    try {
       enterDemoMode();
-      navigate('/');
+      // Automatic redirect via App.jsx when token changes
+    } catch (err) {
+      console.error("Demo Mode error:", err);
       setDemoLoading(false);
-    }, 800);
+    }
   };
 
   const handleLoginSuccess = () => {

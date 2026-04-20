@@ -31,10 +31,18 @@ export const AuthProvider = ({ children }) => {
     setUser(userData);
   };
   
+  // --- BUILD MARKER: 2026-04-20 21:35 --- 
   const enterDemoMode = () => {
-    setIsDemo(true);
-    setToken('demo-mode-active');
-    setUser({ username: 'Demo User', email: 'demo@instance.local', role: 'user' });
+    try {
+      console.log("AuthContext: Initializing localized demo instance...");
+      localStorage.setItem('isDemo', 'true');
+      localStorage.setItem('token', 'demo-mode-active');
+      setIsDemo(true);
+      setToken('demo-mode-active');
+      setUser({ username: 'Demo User', email: 'demo@instance.local', role: 'user' });
+    } catch (err) {
+      console.error("AuthContext: Failed to enter demo mode:", err);
+    }
   };
 
   const logout = () => {
