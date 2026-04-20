@@ -168,7 +168,7 @@ const AdminPanel = () => {
       {/* Overview Tab */}
       {activeTab === 'overview' && (
         <div>
-          <div className="admin-stats-grid">
+          <div className="admin-stats-grid responsive-grid">
             <div className="card admin-stat-card">
               <Users size={28} style={{ color: 'var(--brand-primary)', marginBottom: '12px' }} />
               <div className="stat-value">{stats?.totalUsers || 0}</div>
@@ -262,7 +262,7 @@ const AdminPanel = () => {
 
       {/* Retrain Tab */}
       {activeTab === 'retrain' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px' }}>
+        <div className="responsive-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
           <div className="card">
             <h3 style={{ marginTop: 0, display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
               <Brain size={24} color="var(--brand-primary)" /> Model Retraining

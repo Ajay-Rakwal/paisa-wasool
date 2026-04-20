@@ -1020,12 +1020,81 @@ button {
     font-size: 1.1rem;
   }
 
-  .admin-stats-grid { grid-template-columns: 1fr; }
-  .main-content { padding: 20px; overflow-y: visible; }
+  /* ── Utility Classes for Responsive Layouts ── */
+  .responsive-flex-row {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .responsive-flex-row > div {
+    flex: none !important;
+    width: 100% !important;
+  }
+
+  .main-content { padding: 12px; overflow-y: visible; }
   
   .responsive-stats-grid {
     grid-template-columns: 1fr !important;
     gap: 16px !important;
+  }
+
+  /* ── Inner Page Grids ── */
+  .transactions-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .help-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .dashboard-main-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .dashboard-stats-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Transaction Items ── */
+  .transaction-item {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    padding: 12px !important;
+  }
+
+  .transaction-item .hover-action {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: none !important;
+  }
+
+  /* ── AI Advisor ── */
+  .advisor-input-row {
+    flex-direction: column !important;
+  }
+
+  .advisor-input-row button {
+    width: 100%;
+    justify-content: center;
+    padding: 14px !important;
+  }
+
+  /* ── Page Titles ── */
+  .page-title {
+    font-size: clamp(1.5rem, 5vw, 2rem) !important;
+    margin-bottom: 24px !important;
+    text-align: center;
+  }
+
+  /* ── Cards ── */
+  .card {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .card:hover {
+    transform: none;
   }
 }
 
@@ -1040,5 +1109,24 @@ button {
   }
   .landing-hero-tagline {
     font-size: 1.05rem;
+  }
+
+  .main-content {
+    padding: 8px !important;
+  }
+
+  /* Smaller card padding on very narrow screens */
+  .card {
+    padding: 12px;
+    border-radius: var(--radius-sm);
+  }
+
+  .landing-hero {
+    padding: 100px 20px 40px !important;
+  }
+
+  .input-field {
+    padding: 12px !important;
+    font-size: 1rem !important;
   }
 }

@@ -108,7 +108,7 @@ const AIAdvisor = () => {
 
             <div className="card" style={{ maxWidth: '800px' }}>
                 <form onSubmit={handleAskAdvice} style={{ marginBottom: '24px' }}>
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'stretch' }}>
+                    <div className="advisor-input-row" style={{ display: 'flex', gap: '12px', alignItems: 'stretch' }}>
                         <input 
                             type="text" 
                             className="input-field" 

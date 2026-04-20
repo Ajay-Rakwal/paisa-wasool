@@ -72,7 +72,7 @@ const Dashboard = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
         <h1 className="page-title" style={{ margin: 0 }}>Overview</h1>
         {isDemo && (
           <div style={{ 
@@ -92,22 +92,22 @@ const Dashboard = () => {
       </div>
       
       {/* Top Value Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px', marginBottom: '40px' }}>
+      <div className="dashboard-stats-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '24px', marginBottom: '40px' }}>
         <div className="card">
           <div className="text-muted">Total Balance</div>
-          <div style={{ fontSize: '2rem', fontWeight: '700', marginTop: '8px' }}>₹{(summary.balance || 0).toFixed(2)}</div>
+          <div style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: '700', marginTop: '8px' }}>₹{(summary.balance || 0).toFixed(2)}</div>
         </div>
         <div className="card">
           <div className="text-muted">Total Income</div>
-          <div className="text-success" style={{ fontSize: '2rem', fontWeight: '700', marginTop: '8px' }}>+₹{(summary.totalIncome || 0).toFixed(2)}</div>
+          <div className="text-success" style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: '700', marginTop: '8px' }}>+₹{(summary.totalIncome || 0).toFixed(2)}</div>
         </div>
         <div className="card">
           <div className="text-muted">Total Expenses</div>
-          <div className="text-danger" style={{ fontSize: '2rem', fontWeight: '700', marginTop: '8px' }}>-₹{totalExpense.toFixed(2)}</div>
+          <div className="text-danger" style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: '700', marginTop: '8px' }}>-₹{totalExpense.toFixed(2)}</div>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '32px' }}>
+      <div className="dashboard-main-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px' }}>
         {/* Left Column: Charts */}
         <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
           <h3 style={{ marginTop: 0, marginBottom: '24px' }}>Category Breakdown</h3>

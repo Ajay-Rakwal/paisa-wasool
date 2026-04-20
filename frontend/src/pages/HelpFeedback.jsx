@@ -187,7 +187,7 @@ const HelpFeedback = () => {
   };
 
   return (
-    <div style={{ height: 'calc(100vh - 120px)', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: 'calc(100vh - 120px)', display: 'flex', flexDirection: 'column' }}>
       <div style={{ marginBottom: '24px' }}>
         <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
             <HelpCircle size={28} color="var(--brand-primary)" /> Help & Feedback
@@ -197,7 +197,7 @@ const HelpFeedback = () => {
         </p>
       </div>
 
-      <div style={{ 
+      <div className="help-grid" style={{ 
           display: 'grid', 
           gridTemplateColumns: activeThread ? '350px 1fr' : '1fr 1fr', 
           gap: '24px', 
@@ -393,6 +393,15 @@ const HelpFeedback = () => {
             )}
         </div>
       </div>
+
+      {/* Mobile responsive style */}
+      <style>{`
+        @media (max-width: 768px) {
+          .help-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };

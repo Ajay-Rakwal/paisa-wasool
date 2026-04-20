@@ -89,7 +89,7 @@ const Transactions = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
         <h1 className="page-title" style={{ margin: 0 }}>Transactions</h1>
         {isDemo && (
           <div style={{ 
@@ -108,13 +108,13 @@ const Transactions = () => {
         )}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '24px' }}>
+      <div className="transactions-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '24px' }}>
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <div className="card">
             <h3 style={{ marginTop: 0 }}>Add Transaction</h3>
             <form onSubmit={handleManualAdd}>
-              <div style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
+              <div className="responsive-flex-row" style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
                 <div style={{flex:1}}>
                   <label className="label">Type</label>
                   <select className="input-field" value={type} onChange={e => setType(e.target.value)}>
@@ -237,16 +237,25 @@ const Transactions = () => {
         
       </div>
 
+      {/* Mobile responsive style for transactions grid */}
+      <style>{`
+        @media (max-width: 768px) {
+          .transactions-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
+
       {editingTransaction && (
         <div className="modal-backdrop" style={{
           position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
           background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
           backdropFilter: 'blur(8px)'
         }}>
-          <div className="card" style={{ width: '100%', maxWidth: '450px', border: '1px solid var(--border-light)' }}>
+          <div className="card" style={{ width: '100%', maxWidth: '450px', border: '1px solid var(--border-light)', margin: '0 16px' }}>
             <h2 style={{ marginTop: 0 }}>Edit Transaction</h2>
             <form onSubmit={handleUpdate}>
-              <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+              <div className="responsive-flex-row" style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
                  <div style={{flex:1}}>
                   <label className="label">Type</label>
                   <select className="input-field" value={editForm.type} onChange={e => setEditForm({...editForm, type: e.target.value})}>
