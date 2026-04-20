@@ -13,7 +13,7 @@
   --bg-input-focus: rgba(0, 0, 0, 0.45);
   --text-main: #f0fdf4;
   --text-muted: #86EFAC;
-  --text-muted-secondary: #6b7280;
+  --text-muted-secondary: #9ca3af; /* Improved contrast from #6b7280 */
   --brand-primary: #10B981;
   --brand-secondary: #0D9488;
   --brand-accent: #F59E0B;
@@ -55,7 +55,7 @@
   --bg-input-focus: rgba(0, 0, 0, 0.08);
   --text-main: #0F172A;
   --text-muted: #047857;
-  --text-muted-secondary: #64748B;
+  --text-muted-secondary: #475569; /* Improved contrast from #64748B */
   --brand-primary: #059669;
   --brand-secondary: #0D9488;
   --brand-accent: #D97706;
@@ -119,6 +119,20 @@ button {
   cursor: pointer;
   border: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  outline-offset: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ACCESSIBILITY: FOCUS STATES
+   ═══════════════════════════════════════════════════════════════ */
+:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 4px;
+}
+
+.btn-primary:focus-visible, .btn-secondary:focus-visible, .btn-gold:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 4px;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -345,7 +359,7 @@ button {
 }
 
 .page-title {
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 5vw, 2.5rem);
   margin-top: 0;
   margin-bottom: 40px;
   font-weight: 800;
@@ -513,9 +527,9 @@ button {
 }
 
 .landing-hero-title {
-  font-size: 5.5rem;
+  font-size: clamp(2.5rem, 10vw, 5.5rem);
   font-weight: 900;
-  letter-spacing: -4px;
+  letter-spacing: clamp(-4px, -1vw, -1px);
   line-height: 0.9;
   margin-bottom: 24px;
   background: var(--brand-gradient);
@@ -622,7 +636,7 @@ button {
 
 .landing-features-title {
   text-align: center;
-  font-size: 2.5rem;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
   font-weight: 800;
   margin-bottom: 16px;
   color: var(--text-main);
@@ -631,7 +645,7 @@ button {
 .landing-features-subtitle {
   text-align: center;
   color: var(--text-muted-secondary);
-  font-size: 1.1rem;
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
   margin-bottom: 60px;
 }
 
@@ -978,9 +992,53 @@ button {
     transform: translateX(0);
   }
 
-  .landing-hero-title { font-size: 3rem; }
-  .landing-features-grid { grid-template-columns: 1fr 1fr; }
-  .steps-grid { grid-template-columns: 1fr; gap: 24px; }
-  .admin-stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .main-content { padding: 24px; overflow-y: visible; }
+  .landing-hero-title { font-size: clamp(2.5rem, 8vw, 4rem); }
+  .landing-features-grid { grid-template-columns: 1fr; }
+  .steps-grid { 
+    grid-template-columns: 1fr; 
+    gap: 20px; 
+    text-align: left;
+  }
+  
+  .step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 12px;
+  }
+
+  .step-number {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+    margin: 0;
+  }
+
+  .step-item h3 {
+    margin-bottom: 4px;
+    font-size: 1.1rem;
+  }
+
+  .admin-stats-grid { grid-template-columns: 1fr; }
+  .main-content { padding: 20px; overflow-y: visible; }
+  
+  .responsive-stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-cta-group {
+    flex-direction: column;
+    width: 100%;
+  }
+  .landing-cta-group button {
+    width: 100%;
+    justify-content: center;
+  }
+  .landing-hero-tagline {
+    font-size: 1.05rem;
+  }
 }

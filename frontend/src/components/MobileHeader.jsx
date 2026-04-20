@@ -7,7 +7,11 @@ const MobileHeader = ({ onMenuClick }) => {
       <div className="mobile-logo">
         <span>PAI$A</span> WA$OOL
       </div>
-      <button onClick={onMenuClick} className="hamburger-btn">
+      <button 
+        onClick={onMenuClick} 
+        className="hamburger-btn"
+        aria-label="Toggle navigation menu"
+      >
         <Menu size={28} />
       </button>
     </div>
