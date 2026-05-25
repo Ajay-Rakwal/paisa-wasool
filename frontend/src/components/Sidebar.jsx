@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { LayoutDashboard, Receipt, LogOut, Wallet, Sparkles, Moon, Sun, ShieldCheck, HelpCircle } from 'lucide-react';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
@@ -16,9 +16,9 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
 
   return (
     <div className={`sidebar ${isOpen ? 'open' : ''}`}>
-      <div className="sidebar-logo">
+      <Link to="/" className="sidebar-logo" style={{ color: 'var(--text-main)', textDecoration: 'none' }} onClick={closeSidebar}>
         <span>PAI$A</span> WA$OOL
-      </div>
+      </Link>
       <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '20px' }} className="hide-scrollbar">
         {isAdmin ? (
           /* ── ADMIN NAVIGATION ── */

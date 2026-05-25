@@ -8,6 +8,7 @@ import heroImg from '../assets/landing_hero_minimalist.png';
 
 const LandingPage = () => {
   const [showLogin, setShowLogin] = useState(false);
+  const [modalIsLogin, setModalIsLogin] = useState(true);
   const [demoLoading, setDemoLoading] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { token, login, enterDemoMode } = useContext(AuthContext);
@@ -27,6 +28,7 @@ const LandingPage = () => {
     if (token) {
       navigate('/');
     } else {
+      setModalIsLogin(false);
       setShowLogin(true);
     }
   };
@@ -109,7 +111,7 @@ const LandingPage = () => {
               {demoLoading ? '...' : <><Play size={16} /> Live Demo</>}
             </button>
 
-            <button onClick={() => setShowLogin(true)} className="btn-secondary" style={{ padding: '10px 24px' }}>
+            <button onClick={() => { setModalIsLogin(true); setShowLogin(true); }} className="btn-secondary" style={{ padding: '10px 24px' }}>
               Login
             </button>
             <button onClick={handleCTA} className="btn-primary" style={{ padding: '10px 24px' }}>
@@ -157,7 +159,7 @@ const LandingPage = () => {
             gap: '16px',
             boxShadow: 'var(--shadow-glass)'
           }}>
-            <button onClick={() => { setShowLogin(true); setIsMenuOpen(false); }} className="btn-secondary" style={{ width: '100%' }}>
+            <button onClick={() => { setModalIsLogin(true); setShowLogin(true); setIsMenuOpen(false); }} className="btn-secondary" style={{ width: '100%' }}>
               Login
             </button>
             <button onClick={() => { handleCTA(); setIsMenuOpen(false); }} className="btn-primary" style={{ width: '100%' }}>
@@ -355,6 +357,7 @@ const LandingPage = () => {
         <LoginModal 
           onClose={() => setShowLogin(false)} 
           onSuccess={handleLoginSuccess} 
+          initialIsLogin={modalIsLogin}
         />
       )}
 

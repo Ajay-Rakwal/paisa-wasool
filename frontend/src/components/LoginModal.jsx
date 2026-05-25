@@ -2,8 +2,8 @@ import { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { X } from 'lucide-react';
 
-const LoginModal = ({ onClose, onSuccess }) => {
-  const [isLogin, setIsLogin] = useState(true);
+const LoginModal = ({ onClose, onSuccess, initialIsLogin = true }) => {
+  const [isLogin, setIsLogin] = useState(initialIsLogin);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');

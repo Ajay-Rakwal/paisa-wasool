@@ -52,8 +52,18 @@ const AdminRoute = ({ children }) => {
 };
 
 function AppRoutes() {
-  const { token, user } = useContext(AuthContext);
+  const { token, user, loading } = useContext(AuthContext);
   const isAdmin = user?.role === 'admin';
+
+  if (loading) {
+    return (
+      <div className="loading-overlay">
+        <div className="spinner"></div>
+        <h2 style={{ color: 'var(--brand-primary)', fontWeight: '800', letterSpacing: '-1px' }}>PAI$A WA$OOL</h2>
+        <p style={{ color: 'var(--text-muted-secondary)', fontSize: '0.9rem', marginTop: '4px' }}>Restoring secure session...</p>
+      </div>
+    );
+  }
 
   return (
     <Routes>

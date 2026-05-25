@@ -6,32 +6,55 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [isDemo, setIsDemo] = useState(localStorage.getItem('isDemo') === 'true');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (token) {
-      localStorage.setItem('token', token);
-    } else {
-      localStorage.removeItem('token');
-      // If no token, we might still be in demo mode
-      if (!isDemo) setUser(null);
-    }
-  }, [token, isDemo]);
+    const initializeAuth = async () => {
+      const storedIsDemo = localStorage.getItem('isDemo') === 'true';
+      const storedToken = localStorage.getItem('token');
+      
+      if (storedIsDemo) {
+        setIsDemo(true);
+        setUser({ username: 'Demo User', email: 'demo@instance.local', role: 'user' });
+        setToken('demo-mode-active');
+        setLoading(false);
+        return;
+      }
 
-  useEffect(() => {
-    localStorage.setItem('isDemo', isDemo);
-    if (isDemo) {
-      setUser({ username: 'Demo User', email: 'demo@instance.local', role: 'user' });
-      setToken('demo-mode-active'); // Dummy token to bypass UserRoute guards
-    }
-  }, [isDemo]);
+      if (storedToken && storedToken !== 'demo-mode-active') {
+        try {
+          const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
+            headers: { 'Authorization': `Bearer ${storedToken}` }
+          });
+          if (res.ok) {
+            const userData = await res.json();
+            setUser(userData);
+            setToken(storedToken);
+          } else {
+            // Token is invalid or expired
+            localStorage.removeItem('token');
+            setToken(null);
+            setUser(null);
+          }
+        } catch (err) {
+          console.error("Auth session recovery failed:", err);
+          // On network failure, we still keep the token to allow potential retry/offline
+        }
+      }
+      setLoading(false);
+    };
+
+    initializeAuth();
+  }, []);
 
   const login = (newToken, userData) => {
     setIsDemo(false);
     setToken(newToken);
     setUser(userData);
+    localStorage.setItem('token', newToken);
+    localStorage.setItem('isDemo', 'false');
   };
   
-  // --- BUILD MARKER: 2026-04-20 21:35 --- 
   const enterDemoMode = () => {
     try {
       console.log("AuthContext: Initializing localized demo instance...");
@@ -50,10 +73,11 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setIsDemo(false);
     localStorage.removeItem('isDemo');
+    localStorage.removeItem('token');
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, isDemo, login, logout, setUser, enterDemoMode }}>
+    <AuthContext.Provider value={{ user, token, isDemo, loading, login, logout, setUser, enterDemoMode }}>
       {children}
     </AuthContext.Provider>
   );
