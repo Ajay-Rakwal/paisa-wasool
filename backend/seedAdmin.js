@@ -1,6 +1,4 @@
-
 require('dotenv').config();
-const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const { User } = require('./models');
 
@@ -9,10 +7,11 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const ADMIN_USERNAME = 'admin';
 
 async function seedAdmin() {
+  if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
+    console.log('⚠️ Skipping admin seeding: ADMIN_EMAIL or ADMIN_PASSWORD not configured in environment.');
+    return;
+  }
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log('Connected to MongoDB');
-
     // Check if admin already exists
     const existing = await User.findOne({ email: ADMIN_EMAIL });
     if (existing) {
@@ -24,10 +23,9 @@ async function seedAdmin() {
       if (existing.role !== 'admin') {
         existing.role = 'admin';
         await existing.save();
-        console.log('  Updated role to admin');
+        console.log('  Updated existing user role to admin');
       }
-      
-      process.exit(0);
+      return;
     }
 
     // Create admin user
@@ -50,12 +48,22 @@ async function seedAdmin() {
     console.log(`  Role:     admin`);
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log('\n⚠️  Change the password after first login!');
-    
-    process.exit(0);
   } catch (err) {
     console.error('Error seeding admin:', err.message);
-    process.exit(1);
   }
 }
 
-seedAdmin();
+module.exports = seedAdmin;
+
+if (require.main === module) {
+  const mongoose = require('mongoose');
+  mongoose.connect(process.env.MONGODB_URI)
+    .then(() => {
+      console.log('Connected to MongoDB for direct seeding');
+      seedAdmin().then(() => process.exit(0));
+    })
+    .catch(err => {
+      console.error('Connection failed:', err.message);
+      process.exit(1);
+    });
+}

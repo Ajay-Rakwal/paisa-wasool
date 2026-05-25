@@ -28,11 +28,17 @@ app.use('/api/auth', authRoutes);
 app.use('/api', apiRoutes);
 app.use('/api', adminRoutes);
 
+const seedAdmin = require('./seedAdmin');
+
 const PORT = process.env.PORT || 5000;
 
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
+  .then(async () => {
     console.log('Connected to Database');
+    
+    // Auto-seed admin user on startup
+    await seedAdmin();
+    
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
