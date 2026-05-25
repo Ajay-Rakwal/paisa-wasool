@@ -149,6 +149,7 @@ const HelpFeedback = () => {
         });
         if (res.ok) {
             fetchFeedbacks();
+            setActiveThread(prev => prev ? { ...prev, status: 'resolved' } : null);
         } else {
             const data = await res.json();
             alert(`Error resolving: ${data.message}`);
