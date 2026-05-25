@@ -92,11 +92,21 @@ def retrain():
         corrections_df = pd.DataFrame(corrections)
         corrections_df = corrections_df[['description', 'category']].copy()
 
-        # Weight corrections: duplicate each correction 10x so they have
-        # enough influence against the original ~1000 training samples
+        # 1. Permanently append to the original dataset (1x)
+        # Rename description to transaction_text to match original dataset.csv schema
+        save_df = corrections_df.copy()
+        save_df.rename(columns={'description': 'transaction_text'}, inplace=True)
+        
+        # Append to dataset.csv permanently
+        if os.path.exists(DATASET_PATH):
+            save_df.to_csv(DATASET_PATH, mode='a', header=False, index=False)
+        else:
+            save_df.to_csv(DATASET_PATH, index=False)
+
+        # 2. Weight corrections for training (10x)
         weighted_corrections = pd.concat([corrections_df] * 10, ignore_index=True)
 
-        # Merge: original + weighted corrections
+        # Merge: original + weighted corrections for memory training
         merged_df = pd.concat([original_df, weighted_corrections], ignore_index=True)
 
         # Preprocess
@@ -127,7 +137,7 @@ def retrain():
         # Reload in memory
         pipeline = new_pipeline
 
-        # Save augmented dataset
+        # Optional: Save the fully merged augmented dataset for debugging
         merged_df[['description', 'category']].to_csv(AUGMENTED_PATH, index=False)
 
         return jsonify({
